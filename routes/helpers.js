@@ -1,5 +1,3 @@
-
-
 const joi = require('@hapi/joi');
 
 const schemaEntrada = joi.object({
@@ -22,7 +20,7 @@ const schemaCarta = joi.object({
 })
 
 const convertirANumero = {
-    "A": 1,
+    "A": 14,
     "J": 11,
     "Q": 12,
     "K": 13
@@ -37,6 +35,9 @@ function comparatorCartas(a, b){
     if(isNaN(numberB)){
         numberB = convertirANumero[b.valor];     // Acceder mapa
     }
+
+    a.valor = numberA;
+    b.valor = numberB;
 
     if(numberA > numberB) {
         return 1;
@@ -54,6 +55,7 @@ function comparatorCartas(a, b){
 }
 
 module.exports = {
+
     async validarEntrada(entrada){
 
         // Validamos la entrada (lista de jugadas y el bote)
