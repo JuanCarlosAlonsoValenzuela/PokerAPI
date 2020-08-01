@@ -83,6 +83,7 @@ router.post('/hands', async (req, res) =>{
                 parejas[1] = carta.valor;
             }
             if(contador == 3){
+                parejas[0] = parejas[0] - 1;
                 trio[0] = true;
                 trio[1] = carta.valor;
             }
@@ -90,6 +91,8 @@ router.post('/hands', async (req, res) =>{
                 poker[0] = true;
                 poker[1] = carta.valor;
             }
+
+            
 
             // Color (todas las cartas son del mismo palo) (no hace falta iterar)
             if(j!=0 && color){
