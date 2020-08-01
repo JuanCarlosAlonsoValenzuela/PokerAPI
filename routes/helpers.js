@@ -1,7 +1,7 @@
 const joi = require('@hapi/joi');
 
 const schemaEntrada = joi.object({
-    jugadas: joi.array().required(),
+    jugadas: joi.array().min(2).required(),
     bote: joi.number().min(0).required()
 });
 

@@ -4,6 +4,22 @@ const router = Router();
 
 const helpers  = require('./helpers');
 
+function comparatorJugadas(a, b){
+    if(a.puntuacion > b.puntuacion){
+        return -1
+    }else if (a.puntuacion < b.puntuacion){
+        return 1
+    }else{
+        if(a.valorMasAlto > b.valorMasAlto){
+            return -1;
+        }else if (a.valorMasAlto < b.valorMasAlto){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+}
+
 router.post('/hands', async (req, res) =>{
 
     let input = req.body;
@@ -27,7 +43,6 @@ router.post('/hands', async (req, res) =>{
         let cartaMasAltaColor = cartas[4].valor;
         let cartaMasAlta = cartas[4].valor;
 
-
         // Recorremos todas las cartas de una jugada
         // Inicializamos las comprobaciones
         let escaleraColor = true;
@@ -43,7 +58,6 @@ router.post('/hands', async (req, res) =>{
         let trio = [false, 0];
         let parejas = [0, 0];
         
-        
         if(cartas[0].valor==2 && cartaMasAlta==14){
             secondChance = true;
             if(cartas[0].palo == cartas[4].palo){
@@ -51,7 +65,6 @@ router.post('/hands', async (req, res) =>{
             }
             
         }
-
 
         for(let j = 0; j < 5; j++){
             carta = cartas[j];
@@ -92,8 +105,6 @@ router.post('/hands', async (req, res) =>{
                 poker[1] = carta.valor;
             }
 
-            
-
             // Color (todas las cartas son del mismo palo) (no hace falta iterar)
             if(j!=0 && color){
                 if(carta.palo != cartas[j-1].palo){
@@ -111,8 +122,7 @@ router.post('/hands', async (req, res) =>{
                         escalera = false;
                     }
                 }
-            }
-            
+            } 
 
         }
 
@@ -142,8 +152,21 @@ router.post('/hands', async (req, res) =>{
         puntuaciones.push(resultado);
     }
 
-    // res.send(puntuaciones);
-    res.send(puntuaciones);
+    let jugadaGanadora = puntuaciones.slice(0).sort(comparatorJugadas);
+
+    
+    if( comparatorJugadas(jugadaGanadora[0] , jugadaGanadora[1]) == 0){     // Si hay dos o más jugadas ganadoras
+        res.send("Iguales");
+    }else{
+        let ganador = jugadas[puntuaciones.indexOf(jugadaGanadora[0])].jugador;
+        let premio = Number(input.bote);
+        for(let i=0; i<nJugadas; i++){
+            premio = premio + Number(jugadas[i].apuesta);
+        }
+
+        res.send(`${ganador} gana ${premio}`);
+        
+    }
 
 })
 
