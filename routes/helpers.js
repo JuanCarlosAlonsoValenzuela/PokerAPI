@@ -49,17 +49,20 @@ function comparatorCartas(a, b){
         }else if(a.palo < b.palo){
             return -1;
         }else{
-            throw { details:[ {message: "Partida amañada"} ]}
+            throw  "Partida amañada";
         }
     }
 }
 
 module.exports = {
 
-    async validarEntrada(entrada){
+    validarEntrada(entrada){
 
         // Validamos la entrada (lista de jugadas y el bote)
-        await schemaEntrada.validateAsync(entrada);
+        let { error } = schemaEntrada.validate(entrada);
+        if(error){
+            throw error.details[0].message;
+        }
 
         let jugadas = entrada.jugadas;
 
@@ -67,12 +70,18 @@ module.exports = {
 
         for(let i=0; i<jugadas.length; i++){
             // Validamos cada una de las jugadas (jugador, apuesta y cartas)
-            await schemaJugada.validateAsync(jugadas[i]);
+            let { error } = schemaJugada.validate(jugadas[i]);
+            if(error){
+                throw error.details[0].message;
+            }
             let cartas = jugadas[i].cartas;
 
             // Validamos cada una de las cartas de la jugada
             for(let j=0; j<cartas.length; j++){
-                await schemaCarta.validateAsync(cartas[j]);
+                let { error } = schemaCarta.validate(cartas[j]);
+                if(error){
+                    throw error.details[0].message;
+                }
             }
 
             // Una vez sabemos que las cartas son las correctas, ordenar las cartas del jugador en orden ascendente (mantenerlo)
